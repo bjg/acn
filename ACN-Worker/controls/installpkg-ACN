@@ -1,0 +1,54 @@
+#!/usr/bin/expect
+#
+# Author: Paul Doyle 2012 May
+# - The function of the script is to connect to a specific Astronomy Compute Node (ACN)
+# - once connected to an ACN the next step is to install a package
+#
+#
+
+set ACNNODE [lindex $argv 0]
+set arg1 "./install-pkg sysstat"
+switch -- $ACNNODE {
+	"ACN-DIT1" 	{ set ipaddr 192.168.1.11 }
+	"ACN-DIT2" 	{ set ipaddr 192.168.1.12 }
+	"ACN-DIT3" 	{ set ipaddr 192.168.1.13 }
+	"ACN-DIT4" 	{ set ipaddr 192.168.1.14 }
+	"ACN-DIT5" 	{ set ipaddr 192.168.1.15 }
+	"ACN-DIT6" 	{ set ipaddr 192.168.1.16 }
+	"ACN-DIT7" 	{ set ipaddr 192.168.1.17 }
+	"ACN-DIT8" 	{ set ipaddr 192.168.1.18 }
+	"ACN-CIT1" 	{ set ipaddr 192.168.1.121 }
+	"ACN-CIT2" 	{ set ipaddr 192.168.1.122 }
+	"ACN-CIT3" 	{ set ipaddr 192.168.1.123 }
+	"ACN-CIT4" 	{ set ipaddr 192.168.1.124 }
+	"ACN-CIT5" 	{ set ipaddr 192.168.1.125 }
+	"ACN-CIT6" 	{ set ipaddr 192.168.1.126 }
+	"ACN-CIT7" 	{ set ipaddr 192.168.1.127 }
+	"ACN-CIT8" 	{ set ipaddr 192.168.1.128 }
+	"ACN-ITTD1" 	{ set ipaddr 192.168.1.221 }
+	"ACN-ITTD2" 	{ set ipaddr 192.168.1.222 }
+	"ACN-ITTD3" 	{ set ipaddr 192.168.1.223 }
+	"ACN-ITTD4" 	{ set ipaddr 192.168.1.224 }
+	"ACN-ITTD5" 	{ set ipaddr 192.168.1.225 }
+	"ACN-ITTD6" 	{ set ipaddr 192.168.1.226 }
+	"ACN-ITTD7" 	{ set ipaddr 192.168.1.227 }
+	"ACN-ITTD8" 	{ set ipaddr 192.168.1.228 }
+	"ACN-DITVM1" 	{ set ipaddr 192.168.1.51 }
+	"ACN-DITVM2" 	{ set ipaddr 192.168.1.52 }
+	"ACN-DITVM3" 	{ set ipaddr 192.168.1.53 }
+	"ACN-DITVM4" 	{ set ipaddr 192.168.1.54 }
+	"ACN-DITVM5" 	{ set ipaddr 192.168.1.55 }
+	default 
+			{ 
+			puts "HOST not recognised\n" 
+			exit 1
+			}
+}
+set password 95030bbMAP
+set timeout -1
+spawn ssh paul@$ipaddr $arg1
+match_max 100000
+expect "*?assword:*"
+send -- "$password\r"
+send -- "\r"
+expect eof

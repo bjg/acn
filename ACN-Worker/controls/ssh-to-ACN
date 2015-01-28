@@ -1,0 +1,17 @@
+#!/usr/bin/expect
+#
+# Author: Paul Doyle 2012 May
+# - The function of the script is to connect to a specific Astronomy Compute Node (ACN)
+# - once connected to an ACN the next step is to kick off the aphot
+#
+set ipaddr [lindex $argv 0]
+set arg1 [lindex $argv 1]
+set arg2 [lindex $argv 2]
+set password 95030bbMAP
+set timeout -1
+spawn ssh paul@$ipaddr $arg1 $arg2
+match_max 100000
+expect "*?assword:*"
+send -- "$password\r"
+send -- "\r"
+expect eof

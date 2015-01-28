@@ -1,0 +1,12 @@
+#!/usr/bin/expect
+set password [lrange $argv 0 0]
+set ipaddr [lrange $argv 1 1]
+set scriptname [lrange $argv 2 2]
+set arg1 [lrange $argv 3 3]
+set timeout -1
+spawn ssh paul@$ipaddr $scriptname $arg1
+match_max 100000
+expect "*?assword:*"
+send -- "$password\r"
+send -- "\r"
+expect eof

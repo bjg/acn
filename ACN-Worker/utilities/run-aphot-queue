@@ -1,0 +1,242 @@
+#!/bin/bash
+HOST=$(uname -n)
+FILEPROC=0
+CLEANED=0
+/START
+:u
+STANDBYE=0
+FILEREAD=0
+S3STORAGE="http://s3-eu-west-1.amazonaws.com/astronomydata/AstronomyData/compressedRAW/"
+S3STORAGEUNCOMPRESSED="http://s3.amazonaws.com/astronomydata-uncompressed/"
+S3STORAGECLIPPED="http://s3.amazonaws.com/starcompressed"
+
+# The ACN can run in standby mode which means it waits for a specific file to be present
+# before it starts processing 
+#
+
+USAGE="Usage: `basename $0` [-hvs] queue storage result"
+while getopts hvs OPT; do
+	case "$OPT" in
+		h)
+			echo $USAGE
+			exit 0
+			;;
+		v)
+			echo "`basename $0` version 0.37"
+			exit 0
+			;;
+		s)
+			STANDBYE=1;;
+		\?)
+			echo $USAGE >&2
+			exit 1
+			;;
+	esac
+done
+
+shift `expr $OPTIND - 1`
+if [ $# -eq 3 ]; then
+	QUEUE=$1 
+	STORAGE=$2 
+	RESULTDIR=$3 
+else
+    echo $USAGE >&2
+    exit 1
+fi
+
+HOSTACTIVE="$HOST-PROCESSING"
+HOSTWAITING="$HOST-WAITING-TO-PROCESS"
+HOSTFINISHED="$HOST-FINISHED"
+touch $RESULTDIR/active-nodes/$HOSTWAITING
+
+#
+# If we are in standbye mode we wait for the queue/init file to begin
+#
+if [ $STANDBYE == 1 ] ; then 
+	while [ ! -f $RESULTDIR/init ]
+	do
+		sleep 2
+	done	
+fi
+
+START=$(date +%s)
+NOW=$(date +"%Y%m%d%H%M%S")
+SARDATAFILE="sar-$HOST-$NOW"
+sar -o $SARDATAFILE 5 100 > /dev/null 2>&1 &
+
+rm ./acn-aphot* 2> /dev/null
+rm -rf Exp 2> /dev/null
+#cp $STORAGE/ACN-APPLIANCE/acn* ~ #2> /dev/null
+#if [ $? -eq 0 ] ; then
+	gunzip ./acn-appliance-v* #2> /dev/null
+	tar xmf ./acn-appliance-v* #2> /dev/null
+#else
+#	echo "Host $HOST could not copy tar.gz file"
+#	exit 1
+#fi
+mkdir Exp 2> /dev/null
+mkdir Result 2> /dev/null
+
+mv $RESULTDIR/active-nodes/$HOSTWAITING $RESULTDIR/active-nodes/$HOSTACTIVE
+
+cd Result
+echo $HOST now online
+for i in $( ls $QUEUE ); do
+	FILEREAD=$(( $FILEREAD + 1 ))
+	SKIP=0
+	parts=(${i//-/ })
+	if [ ${parts[0]} = "Queued" ] ; then
+	#	echo This file is NOT already LOCKED: $i
+		mv $QUEUE/$i $QUEUE/LOCKED-$i 2> /dev/null
+		if [ $? -eq 0 ] ; then
+		#	echo Locked for proessing $i
+			if [ ${parts[1]} = "star1" ]; then
+				wget $S3STORAGECLIPPED/star1-${parts[2]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+				mv star1-${parts[2]} ../Exp 
+				#cp $STORAGE/AstronomyData/compressed/star1-${parts[2]} ../Exp
+				../funpack ../Exp/star1-${parts[2]}
+				rm ../Exp/star1-${parts[2]}
+				../acn-aphot ../Exp/ -c ../MasterFiles/star1-Final-MasterFlat.fits ../MasterFiles/star1-Final-MasterBias-subrect.fits < ../MasterFiles/config1 > /dev/null
+			elif [ ${parts[1]} = "star2" ]; then
+				wget $S3STORAGECLIPPED/star2-${parts[2]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+				mv star2-${parts[2]} ../Exp 
+				#cp $STORAGE/AstronomyData/compressed/star2-${parts[2]} ../Exp
+				../funpack ../Exp/star2-${parts[2]}
+				rm ../Exp/star2-${parts[2]}
+				../acn-aphot ../Exp/ -c ../MasterFiles/star2-Final-MasterFlat.fits ../MasterFiles/star2-Final-MasterBias-subrect.fits < ../MasterFiles/config1 > /dev/null
+			elif [ ${parts[1]} = "star3" ]; then
+				wget $S3STORAGECLIPPED/star3-${parts[2]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+				mv star3-${parts[2]} ../Exp 
+				#cp $STORAGE/AstronomyData/compressed/star3-${parts[2]} ../Exp
+				../funpack ../Exp/star3-${parts[2]}
+				rm ../Exp/star3-${parts[2]}
+				../acn-aphot ../Exp/ -c ../MasterFiles/star2-Final-MasterFlat.fits ../MasterFiles/star3-Final-MasterBias-subrect.fits < ../MasterFiles/config1 > /dev/null
+			elif [ ${parts[1]} = "star4" ]; then
+				wget $S3STORAGECLIPPED/star4-${parts[2]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+				mv star4-${parts[2]} ../Exp 
+				#cp $STORAGE/AstronomyData/compressed/star4-${parts[2]} ../Exp
+				../funpack ../Exp/star4-${parts[2]}
+				rm ../Exp/star4-${parts[2]}
+				../acn-aphot ../Exp/ -c ../MasterFiles/star2-Final-MasterFlat.fits ../MasterFiles/star4-Final-MasterBias-subrect.fits < ../MasterFiles/config1 > /dev/null
+			elif [ ${parts[1]} = "star5" ]; then
+				wget $S3STORAGECLIPPED/star5-${parts[2]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+				mv star5-${parts[2]} ../Exp 
+				#cp $STORAGE/AstronomyData/compressed/star5-${parts[2]} ../Exp
+				../funpack ../Exp/star5-${parts[2]}
+				rm ../Exp/star5-${parts[2]}
+				../acn-aphot ../Exp/ -c ../MasterFiles/star2-Final-MasterFlat.fits ../MasterFiles/star5-Final-MasterBias-subrect.fits < ../MasterFiles/config1 > /dev/null
+			else
+				parts1=(${i//./ }) # split the file name so we acan check we are using 00122.fit.fz 
+				if [ ${#parts1[*]} -eq 3 ] ; then
+				#if [ ${parts1[2]}  = "fz" ] ; then 
+					#cp $STORAGE/AstronomyData/compressedRAW/${parts[1]} ../Exp # we strip away the queued tag and copy the full file
+					wget $S3STORAGE${parts[1]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+					if [ $? -ne 0 ] ; then
+						echo Error $? $HOST failed to get file $S3STORAGE${parts[1]}  Retrying......
+						wget $S3STORAGE${parts[1]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+						if [ $? -ne 0 ] ; then
+							echo Error $? $HOST Second failed attempt to get file $S3STORAGE${parts[1]}  Retrying......
+							wget $S3STORAGE${parts[1]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+							if [ $? -ne 0 ] ; then
+								echo Error $? $HOST Third failed attempt to get file $S3STORAGE${parts[1]}  Skipping......
+								SKIP=1
+							fi
+						fi
+					fi
+					if [ $SKIP -eq 0 ]; then
+						mv ${parts[1]} ../Exp # we strip away the queued tag and copy the full file
+						../funpack ../Exp/${parts[1]}
+						rm ../Exp/${parts[1]}
+						../acn-aphot ../Exp/ -c ../MasterFiles/Final-MasterFlat.fits ../MasterFiles/Final-MasterBias-subrect.fits < ../MasterFiles/config > /dev/null
+					fi
+				else
+					wget $S3STORAGEUNCOMPRESSED${parts[1]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+					#s3cmd get $S3STORAGEUNCOMPRESSED${parts[1]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+					#cp $STORAGE/AstronomyData/ExpA/dataset1/${parts[1]} ../Exp
+					if [ $? -ne 0 ] ; then
+						echo Error $? $HOST failed to get file $S3STORAGEUNCOMPRESSED${parts[1]}  Retrying......
+						wget $S3STORAGEUNCOMPRESSED${parts[1]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+					#	s3cmd get $S3STORAGEUNCOMPRESSED${parts[1]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+						if [ $? -ne 0 ] ; then
+							echo Error $? $HOST Second failed attempt to get file $S3STORAGEUNCOMPRESSED${parts[1]}  Retrying......
+							wget $S3STORAGEUNCOMPRESSED${parts[1]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+					#		s3cmd get $S3STORAGEUNCOMPRESSED${parts[1]} > /dev/null 2>&1 # we strip away the queued tag and copy the full file
+							if [ $? -ne 0 ] ; then
+								echo Error $? $HOST Third failed attempt to get file $S3STORAGEUNCOMPRESSED${parts[1]}  Skipping......
+								SKIP=1
+							fi
+						fi
+					fi
+					if [ $SKIP -eq 0 ]; then
+						mv ${parts[1]} ../Exp # we strip away the queued tag and copy the full file
+						#../funpack ../Exp/${parts[1]}
+						#rm ../Exp/${parts[1]}
+						../acn-aphot ../Exp/ -c ../MasterFiles/Final-MasterFlat.fits ../MasterFiles/Final-MasterBias-subrect.fits < ../MasterFiles/config > /dev/null
+					fi
+			#	else 
+			#			../acn-aphot ../Exp/ -c ../MasterFiles/Final-MasterFlat.fits ../MasterFiles/Final-MasterBias-subrect.fits < ../MasterFiles/config > /dev/null
+					
+				fi
+			fi
+
+			if [ $SKIP -eq 0 ]; then
+				CLEANED=$(( $CLEANED + 1 ))
+				mv ./* $RESULTDIR #2> /dev/null
+				if [ $? -ne 0 ] ; then
+					echo "Could not write result file $i : $HOST Bailing"
+					touch "arlyEXIT"
+					exit 1;
+				fi	
+				if [ $CLEANED -eq 0 ] ; then
+					CLEANED=1
+				fi
+				END=$(date +%s)
+				DIFF=$(( $END - $START ))
+				RATE=$(echo "scale=4; ${DIFF} / ${FILEREAD}" | bc -l)
+				echo -ne "Clean Rate = $RATE  Files processed: $FILEREAD :Current file = ${parts[1]}-${parts[2]}\r"
+				#echo ${parts[1]} cleaned
+				rm ../Exp/* 2> /dev/null
+				rm ./* 2> /dev/null
+			fi
+		fi
+	fi
+done
+cd ~
+rm -rf *tar 2> /dev/null
+rm -rf Master* 2> /dev/null
+rm ./acn* 2> /dev/null
+rm -rf Exp 2> /dev/null
+NOW=$(date +"%Y%m%d%H%M%S")
+TARFILE="result-$NOW.tar"
+HOSTNAME="$HOST-$NOW"
+rm -rf Result 2>/dev/null
+END=$(date +%s)
+DIFF=$(( $END - $START ))
+
+if [ $DIFF -eq 0 ] ; then
+	DIFF=1
+fi	
+if [ $CLEANED -eq 0 ] ; then
+	echo "Seconds elapsed-> $DIFF :: Files Cleaned-> 0 :: Clean Rate-> 0" > $HOSTNAME
+else
+	RATE=$(echo "scale=4; ${DIFF} / ${CLEANED}" | bc -l)
+	echo "$HOSTNAME: Seconds elapsed-> $DIFF :: Files Cleaned-> $CLEANED :: Clean Rate-> $RATE" > $HOSTNAME
+fi
+
+mv $HOSTNAME $RESULTDIR 2> /dev/null
+if [ $? -ne 0 ] ; then
+	echo "Could not write Summary  file $i : $HOST Bailing"
+	touch "EarlyEXIT2a"
+	exit 1;
+else
+	echo "$HOSTNAME: Seconds elapsed->:$DIFF: Files Cleaned :$CLEANED:Average Time to clean 1 file:$RATE"
+fi
+
+mv $SARDATAFILE $RESULTDIR 2> /dev/null
+if [ $? -ne 0 ] ; then
+	echo "Could not write Sar  file $i : $HOST Bailing"
+	touch "EarlyEXIT3"
+	exit 1;
+fi
+rm  *EXIT* 2> /dev/null
+mv $RESULTDIR/active-nodes/$HOSTACTIVE $RESULTDIR/active-nodes/$HOSTFINISHED

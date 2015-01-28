@@ -1,0 +1,77 @@
+# ACN Computing list
+# These nodes will be used for cleaning and running work
+#
+# Paul Doyle Copyright May 2012
+#
+#
+node:ACN-DIT1:192.168.1.11:storage1
+node:ACN-DIT2:192.168.1.12:storage1
+node:ACN-DIT3:192.168.1.13:storage1
+node:ACN-DIT4:192.168.1.14:storage1
+#node:ACN-DIT5:192.168.1.15:storage1
+node:ACN-DIT6:192.168.1.16:storage1
+node:ACN-DIT7:192.168.1.17:storage1
+node:ACN-DIT8:192.168.1.18:storage1
+node:ACN-CIT1:192.168.1.121:storage2
+node:ACN-CIT2:192.168.1.122:storage2
+node:ACN-CIT3:192.168.1.123:storage2
+node:ACN-CIT4:192.168.1.124:storage2
+node:ACN-CIT5:192.168.1.125:storage2
+node:ACN-CIT6:192.168.1.126:storage2
+#node:ACN-CIT7:192.168.1.127:storage2
+node:ACN-CIT8:192.168.1.128:storage2
+node:ACN-ITTD1:192.168.1.221:storage3
+node:ACN-ITTD2:192.168.1.222:storage3
+node:ACN-ITTD3:192.168.1.223:storage3
+node:ACN-ITTD4:192.168.1.224:storage3
+#node:ACN-ITTD5:192.168.1.225:storage3
+node:ACN-ITTD6:192.168.1.226:storage3
+node:ACN-ITTD7:192.168.1.227:storage3
+node:ACN-ITTD8:192.168.1.228:storage3
+#
+# London 
+#
+node:ACN-DITVM-London1:192.168.1.51:storage4
+node:ACN-DITVM-London2:192.168.1.52:storage4
+node:ACN-DITVM-London3:192.168.1.53:storage4
+#node:ACN-DITVM-London4:192.168.1.54:storage4
+node:ACN-DITVM-London5:192.168.1.55:storage4
+node:ACN-DITVM-London6:192.168.1.56:storage4
+node:ACN-DITVM-London7:192.168.1.57:storage4
+node:ACN-DITVM-London8:192.168.1.58:storage4
+node:ACN-DITVM-London9:192.168.1.59:storage4
+node:ACN-DITVM-London10:192.168.1.60:storage5
+node:ACN-DITVM-London11:192.168.1.61:storage5
+node:ACN-DITVM-London12:192.168.1.62:storage5
+node:ACN-DITVM-London13:192.168.1.63:storage5
+node:ACN-DITVM-London14:192.168.1.64:storage5
+#node:ACN-DITVM-London15:192.168.1.65:storage5
+#
+# PARIS
+#
+node:ACN-DITVM-paris1:192.168.1.71:storage5
+node:ACN-DITVM-paris2:192.168.1.72:storage5
+node:ACN-DITVM-paris3:192.168.1.73:storage5
+node:ACN-DITVM-paris4:192.168.1.74:storage5
+#node:ACN-DITVM-paris5:192.168.1.75:storage5
+node:ACN-DITVM-paris6:192.168.1.76:storage5
+#node:ACN-DITVM-paris7:192.168.1.77:storage5
+node:ACN-DITVM-paris8:192.168.1.78:storage5
+node:ACN-DITVM-paris9:192.168.1.79:storage5
+node:ACN-DITVM-paris10:192.168.1.80:storage5
+node:ACN-DITVM-paris11:192.168.1.81:storage5
+node:ACN-DITVM-paris12:192.168.1.82:storage5
+#
+# Sydney
+#
+node:ACN-DITVM-Sydney1:192.168.1.91:storage5
+node:ACN-DITVM-Sydney2:192.168.1.92:storage5
+#node:ACN-DITVM-Sydney3:192.168.1.93:storage5
+node:ACN-DITVM-Sydney4:192.168.1.94:storage5
+#
+# Tokyo
+#
+node:ACN-DITVM-Tokyo1:192.168.1.95:storage5
+node:ACN-DITVM-Tokyo2:192.168.1.96:storage5
+#node:ACN-DITVM-Tokyo3:192.168.1.97:storage5
+node:ACN-DITVM-Tokyo4:192.168.1.98:storage5

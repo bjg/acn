@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+# Author: Paul Doyle 2012 May
+# - The function of the script is to kick off the remote job. 
+# - The script is usually run from a location than can access the central storage node
+
+usage ()
+{
+	printf "\n"
+	printf "Usage: `basename $0`[ -hv ] [ -q mode ] [ -c nodes ] [ -r nodes ] [ -x nodes ] [ -p nodes ] \n"
+	printf "\n"
+	printf "Switchs\n"
+	printf "        -h            :   provide help on parameter use\n"
+	printf "        -v            :   print the latest version of the script\n"
+	printf "        -q compressed :   create a queue using compressed fits files fits.fz\n"
+	printf "        -q standard   :   create a queue using uncompressed fits files fits\n"
+	printf "        -q clipped    :   create a queue using compressed and star clipped fits files star-fits.fz\n"
+	printf "        -c nodes      :   clean all of the ACN nodes in the nodes file\n"
+	printf "        -r nodes      :   run all of the ACN nodes in the nodes file\n"
+	printf "        -x nodes      :   reboot  all of the ACN nodes in the nodes file\n"
+	printf "        -p nodes      :   ping all of the ACN nodes in the nodes file\n"
+	printf "\n"
+}
+
+MODE="default"
+
+while getopts hvq:c:r:p:x: OPT; do
+	case "$OPT" in
+		h)
+			usage
+			exit 0
+			;;
+		v)
+			echo "`basename $0` version 0.4"
+			exit 0
+			;;
+		q)
+			MODE="QUEUE"
+			SWITCH=$OPTARG
+			;;
+		c)
+			MODE="CLEAN"
+			NODEFILE=$OPTARG
+			;;
+		x)
+			MODE="REBOOT"
+			NODEFILE=$OPTARG
+			;;
+		p)
+			MODE="PING"
+			NODEFILE=$OPTARG
+			;;
+		r)
+			MODE="RUN"
+			NODEFILE=$OPTARG
+			;;
+		\?)
+			usage
+			exit 1
+			;;
+	esac
+done
+
+
+if [ $MODE = "CLEAN" ] ; then
+	/mnt/storage1/ACN-APPLIANCE/controls/activate-ACN -c $NODEFILE
+elif [ $MODE = "RUN" ]; then
+	/mnt/storage1/ACN-APPLIANCE/controls/activate-ACN -r $NODEFILE
+elif [ $MODE = "PING" ]; then
+	/mnt/storage1/ACN-APPLIANCE/controls/activate-ACN -p $NODEFILE
+elif [ $MODE = "REBOOT" ]; then
+	/mnt/storage1/ACN-APPLIANCE/controls/activate-ACN -x $NODEFILE
+elif [ $MODE = "QUEUE" ] ; then 
+	case "$SWITCH" in
+		compressed)
+			/mnt/storage1/ACN-APPLIANCE/controls/create-queue -z
+			;;
+		standard)
+			/mnt/storage1/ACN-APPLIANCE/controls/create-queue -s
+			;;
+		clipped)
+			/mnt/storage1/ACN-APPLIANCE/controls/create-queue -c
+			;;
+	esac
+else
+	usage	
+fi
+
+
+
+

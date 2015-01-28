@@ -1,0 +1,88 @@
+#!/bin/bash
+#
+# Author: Paul Doyle 2012 May
+# - The function of the script is to verify connectivity to nodes 
+# - once connected to an ACN the next step is to kick off the  ping
+# 
+#
+usage ()
+{
+        printf "\n"
+        printf "Usage: `basename $0`[ -hvcprx ]  nodefile \n"
+        printf "\n"
+        printf "Switchs\n"
+        printf "        -h            :   provide help on parameter use\n"
+        printf "        -v            :   print the latest version of the script\n"
+        printf "        -p nodes      :   ping all of the ACN nodes in the nodes file\n"
+        printf "        -x nodes      :   reboot all of the ACN nodes in the nodes file\n"
+        printf "        -c nodes      :   clean all of the ACN nodes in the nodes file\n"
+        printf "        -r nodes      :   run aphot on all of the ACN nodes in the nodes file\n"
+        printf "\n"
+}
+
+START=$(date +%s)
+while getopts hvpxcr OPT; do
+        case "$OPT" in
+                h)
+                        usage
+                        exit 0
+                        ;;
+                v)
+                        echo "`basename $0` version 0.1"
+                        exit 0
+                        ;;
+                p)
+                        MODE="PING"
+                        ;;
+                x)
+                        MODE="REBOOT"
+                        ;;
+		c)
+			MODE="CLEAN"
+			;;
+		r)
+			MODE="RUN"
+			;;
+                \?)
+                        usage
+                        exit 1
+                        ;;
+        esac
+done
+
+shift `expr $OPTIND - 1`
+if [ $# -eq 1 ]; then
+        HOSTFILE=$1
+else
+        usage
+        exit 1
+fi
+
+for line in `cat $HOSTFILE`;
+do
+        parts=(${line//:/ })
+        if [ ${parts[0]} = "node" ] ; then
+                HOST=${parts[1]}
+                IP=${parts[2]}
+                STORAGE=${parts[3]}
+                if [ $MODE = "PING" ] ; then
+                        ssh paul@$IP ping -c 1 heanet.ie > /dev/null 2>&1
+			if [ $? -eq 0 ]; then
+				printf "Success pinging from %s \n" $HOST
+			else
+				printf "Failed  pinging from %s \n" $HOST
+			fi
+                elif [ $MODE = "REBOOT" ] ; then
+                        ssh paul@$IP sudo reboot 
+			if [ $? -eq 0 ]; then
+				printf "Success rebooting %s \n" $HOST
+			else
+				printf "Failed rebooting %s \n" $HOST
+			fi
+		elif [ $MODE = "CLEAN" ] ; then
+			ssh paul@$IP ./prepare-acn 
+		elif [ $MODE = "RUN" ] ; then
+			ssh paul@$IP ./start-cleaning $STORAGE &
+		fi
+        fi
+done

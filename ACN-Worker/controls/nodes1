@@ -1,0 +1,7 @@
+# ACN Computing list
+# These nodes will be used for cleaning and running work
+#
+# Paul Doyle Copyright May 2012
+#
+#
+node:ACN-DIT2:192.168.1.12:storage1

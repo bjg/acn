@@ -1,0 +1,4 @@
+! this is a comment
+! Put star details below
+! X Y Radius Annulus Dannulus boxwidth Threshold
+41 41 15 10 15 80 660 ! Star details 1

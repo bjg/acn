@@ -1,0 +1,57 @@
+#!/bin/bash
+USAGE="Usage: `basename $0` [-hv] [-e experiment] dataset storage"
+
+while getopts hve: OPT; do
+	case "$OPT" in
+		h)
+			echo $USAGE
+			exit 0
+			;;
+		v)
+			echo "`basename $0` version 0.3"
+			exit 0
+			;;
+		e)
+			EXPERIMENT=$OPTARG
+			;;
+		\?)
+			echo $USAGE >&2
+			exit 1
+			;;
+	esac
+done
+
+shift `expr $OPTIND - 1`
+# We want at least one non-option argument. 
+# Remove this block if you don't need it.
+if [ $# -eq 2 ]; then
+	DATASET=$1 
+	STORAGE=$2 
+else
+    echo $USAGE >&2
+    exit 1
+fi
+
+rm ./acn* 2> /dev/null
+rm -rf Exp 2> /dev/null
+cp $STORAGE/ACN-APPLIANCE/acn* ~
+gunzip ./acn-appliance-v0010.tar.gz
+tar xvf ./acn-appliance-v0010.tar
+mkdir Exp 2> /dev/null
+mkdir Result 2> /dev/null
+cd Result
+for i in $( ls $STORAGE/AstronomyData/$EXPERIMENT/$DATASET ); do
+	cp $STORAGE/AstronomyData/$EXPERIMENT/$DATASET/$i ../Exp
+	../acn-aphot ../Exp/ -c ../MasterFiles/Final-MasterFlat.fits ../MasterFiles/Final-MasterBias-subrect.fits < ../MasterFiles/config
+	rm ../Exp/*
+done
+cd ~
+rm -rf *tar 2> /dev/null
+rm -rf Master* 2> /dev/null
+rm ./acn* 2> /dev/null
+rm -rf Exp 2> /dev/null
+NOW=$(date +"%Y%m%d%H%M%S")
+TARFILE="result-$NOW.tar"
+tar cvf $TARFILE ./Result
+gzip ./$TARFILE
+rm -rf Result 2>/dev/null

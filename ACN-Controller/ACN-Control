@@ -1,0 +1,74 @@
+#!/bin/bash
+#
+# Author: Paul Doyle 2012 May
+# - The function of the script is to connect to  the controlling machine and kick off the remote job. 
+# - this file can be used from a remoter system using a VPN to connect to the gateway where the rest 
+# the SSh scripts are used to start/clean each node or create a working queuea
+#
+USAGE="Usage: `basename $0` [ -hv ] < -q compressed | standard | clipped > | < -c hostfile > | < -r nodefile >   ip password "
+while getopts hvq:c:r: OPT; do
+	case "$OPT" in
+		h)
+			echo $USAGE
+			exit 0
+			;;
+		v)
+			echo "`basename $0` version 0.1"
+			exit 0
+			;;
+		q)
+			MODE="QUEUE"
+			SWITCH=$OPTARG
+			;;
+		c)
+			MODE="CLEAN"
+			NODEFILE=$OPTARG
+			;;
+		r)
+			MODE="RUN"
+			NODEFILE=$OPTARG
+			;;
+		*)
+			echo $USAGE >&2
+			exit 0
+			;;
+		\?)
+			echo $USAGE >&2
+			exit 1
+			;;
+	esac
+done
+shift `expr $OPTIND - 1`
+if [ $# -eq 2 ]; then
+	IPADDR=$1 
+	PASSWORD=$2 
+elif [ $# -eq 0 ]; then
+	IPADDR="147.252.30.70" 
+	PASSWORD="95030bbMAP"
+	NODEFILE="nodes"
+else
+	echo $USAGE >&2
+			exit 1
+fi
+if [ $MODE = "CLEAN" ] ; then
+	./ssh-connect $PASSWORD $IPADDR ./activate-ACN -c $NODEFILE
+elif [ $MODE = "QUEUE" ] ; then 
+	case "$SWITCH" in
+		compressed)
+			./ssh-connect $PASSWORD $IPADDR ./reset-queue -z
+			;;
+		standard)
+			./ssh-connect $PASSWORD $IPADDR ./reset-queue -s
+			;;
+		clipped)
+			./ssh-connect $PASSWORD $IPADDR ./reset-queue -c
+			;;
+	esac
+elif [ $MODE = "RUN" ]; then
+	./ssh-connect $PASSWORD $IPADDR ./activate-ACN -r $NODEFILE
+	
+fi
+
+
+
+

@@ -1,0 +1,36 @@
+#/bin/sh
+#
+# prepare-acn:
+#
+# Author Paul Doyle (c) May 2012
+#
+# The purpose of this script is to clean up the ACN node.
+# It should remain as generic as possible so that it can 
+# be used to copy new files into the ACN or perform once off
+# work such as installations.
+# 
+# It can also be used to update itself. 
+#
+USAGE="Usage: `basename $0` [-hv]"
+while getopts hve: OPT; do
+        case "$OPT" in
+                h)
+                        echo $USAGE
+                        exit 0
+                        ;;
+                v)
+                        echo "`basename $0` version 0.2"
+                        exit 0
+                        ;;
+                \?)
+                        echo $USAGE >&2
+                        exit 1
+                        ;;
+        esac
+done
+
+cd ~
+rm -rf ./* 2> /dev/null
+cp /mnt/storage1/ACN-APPLIANCE/utilities/* .
+HOST=$(uname -n)
+echo  $HOST: Node is now cleaned

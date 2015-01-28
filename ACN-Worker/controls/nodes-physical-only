@@ -1,0 +1,30 @@
+# ACN Computing list
+# These nodes will be used for cleaning and running work
+#
+# Paul Doyle Copyright May 2012
+#
+#
+node:ACN-DIT1:192.168.1.11:storage1
+node:ACN-DIT2:192.168.1.12:storage1
+node:ACN-DIT3:192.168.1.13:storage1
+node:ACN-DIT4:192.168.1.14:storage1
+node:ACN-DIT5:192.168.1.15:storage1
+node:ACN-DIT6:192.168.1.16:storage1
+node:ACN-DIT7:192.168.1.17:storage1
+node:ACN-DIT8:192.168.1.18:storage1
+node:ACN-CIT1:192.168.1.121:storage2
+#node:ACN-CIT2:192.168.1.122:storage2
+node:ACN-CIT3:192.168.1.123:storage2
+node:ACN-CIT4:192.168.1.124:storage2
+node:ACN-CIT5:192.168.1.125:storage2
+node:ACN-CIT6:192.168.1.126:storage2
+node:ACN-CIT7:192.168.1.127:storage2
+node:ACN-CIT8:192.168.1.128:storage2
+node:ACN-ITTD1:192.168.1.221:storage3
+node:ACN-ITTD2:192.168.1.222:storage3
+node:ACN-ITTD3:192.168.1.223:storage3
+node:ACN-ITTD4:192.168.1.224:storage3
+node:ACN-ITTD5:192.168.1.225:storage3
+node:ACN-ITTD6:192.168.1.226:storage3
+node:ACN-ITTD7:192.168.1.227:storage3
+node:ACN-ITTD8:192.168.1.228:storage3

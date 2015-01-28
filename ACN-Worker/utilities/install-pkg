@@ -1,0 +1,18 @@
+#!/usr/bin/expect
+#
+# Author: Paul Doyle 2012 May
+# - The function of the script is to support the installation of
+# - packages for the ACN node.
+# The package to install is sent as the parameters to the file
+#
+#
+set ACNNODE [lindex $argv 0]
+set password 95030bbMAP
+set timeout -1
+spawn sudo apt-get install $ACNNODE
+match_max 100000
+expect "*?assword*"
+send -- "$password\r"
+expect "*?Y/n*" 
+send -- "y\r"
+expect eof

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#
+# cut out the star images from the files and compress them
+#
+#
+mkdir ./compressed
+for i in $( ls *.fits ); do
+       ../../fitscopy ./$i[71:153,279:361]   ./compressed/star1-$i
+       ../../fitscopy ./$i[86:168,180:262]   ./compressed/star2-$i
+       ../../fitscopy ./$i[78:160,63:145]    ./compressed/star3-$i
+       ../../fitscopy ./$i[219:301,2:84]     ./compressed/star4-$i
+       ../../fitscopy ./$i[339:421,337:419]  ./compressed/star5-$i
+       ../../fpack ./compressed/star1-$i ; rm ./compressed/star1-$i
+       ../../fpack ./compressed/star2-$i ; rm ./compressed/star2-$i
+       ../../fpack ./compressed/star3-$i ; rm ./compressed/star3-$i
+      ../../fpack ./compressed/star4-$i ; rm ./compressed/star4-$i
+       ../../fpack ./compressed/star5-$i ; rm ./compressed/star5-$i
+done

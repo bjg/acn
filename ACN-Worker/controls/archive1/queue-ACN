@@ -1,0 +1,43 @@
+#!/bin/bash
+NOW=$(date +%Y%m%d%H%M%S)
+USAGE="Usage: `basename $0` [ -hvszc ]"
+
+QUEUEDIR="/mnt/storage1/queue"
+
+while getopts hvszc OPT; do
+	case "$OPT" in
+		h)
+			echo $USAGE
+			exit 0
+			;;
+		v)
+			echo "`basename $0` version 0.5"
+			exit 0
+			;;
+		s) #    Standard mode
+			SOURCEDIR=/mnt/storage1/AstronomyData/ExpA/dataset1
+			MODE=STANDARD
+			;;
+		z) #	compressed mode
+			SOURCEDIR=/mnt/storage1/AstronomyData/compressedRAW
+			MODE=COMPRESSED
+			;;
+		c) #	Clipped and compressed mode
+			SOURCEDIR=/mnt/storage1/AstronomyData/compressed
+			MODE=CLIPPED
+			;;
+		\?)
+			echo $USAGE >&2
+			exit 1
+			;;
+	esac
+done
+
+mv $QUEUEDIR $QUEUEDIR-$MODE-$NOW #2> /dev/null
+if [ $? -ne 0 ] ; then
+	echo failed to move queue. 
+else
+#	./create-queue -s /mnt/storage1/AstronomyData/ExpA/dataset1 /mnt/storage1/queue /mnt/storage1/queue/result
+	./create-queue -s $SOURCEDIR /mnt/storage1/queue /mnt/storage1/queue/result
+fi
+

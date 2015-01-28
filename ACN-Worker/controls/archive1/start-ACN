@@ -1,0 +1,187 @@
+#!/usr/bin/expect
+#
+# Author: Paul Doyle 2012 May
+# - The function of the script is to connect to a specific Astronomy Compute Node (ACN)
+# - once connected to an ACN the next step is to kick off the aphot cleaning
+#
+#
+#
+
+set ACNNODE [lindex $argv 0]
+switch -- $ACNNODE {
+	"ACN-DIT1" 	{ 
+			set ipaddr 192.168.1.11
+			set arg1 "./start-cleaning storage1"
+			}
+	"ACN-DIT2" 	{ 
+			set ipaddr 192.168.1.12
+			set arg1 "./start-cleaning storage1"
+			}
+	"ACN-DIT3" 	{ 
+			set ipaddr 192.168.1.13
+			set arg1 "./start-cleaning storage1"
+			}
+	"ACN-DIT4" 	{ 
+			set ipaddr 192.168.1.14
+			set arg1 "./start-cleaning storage1"
+			}
+	"ACN-DIT5" 	{ 
+			set ipaddr 192.168.1.15
+			set arg1 "./start-cleaning storage1"
+			}
+	"ACN-DIT6" 	{ 
+			set ipaddr 192.168.1.16
+			set arg1 "./start-cleaning storage1"
+			}
+	"ACN-DIT7" 	{ 
+			set ipaddr 192.168.1.17
+			set arg1 "./start-cleaning storage1"
+			}
+	"ACN-DIT8" 	{ 
+			set ipaddr 192.168.1.18
+			set arg1 "./start-cleaning storage1"
+			}
+	"ACN-CIT1" 	{ 
+			set ipaddr 192.168.1.121
+			set arg1 "./start-cleaning storage2"
+			}
+	"ACN-CIT2" 	{ 
+			set ipaddr 192.168.1.122
+			set arg1 "./start-cleaning storage2"
+			}
+	"ACN-CIT3" 	{ 
+			set ipaddr 192.168.1.123
+			set arg1 "./start-cleaning storage2"
+			}
+	"ACN-CIT4" 	{ 
+			set ipaddr 192.168.1.124
+			set arg1 "./start-cleaning storage2"
+			}
+	"ACN-CIT5" 	{ 
+			set ipaddr 192.168.1.125
+			set arg1 "./start-cleaning storage2"
+			}
+	"ACN-CIT6" 	{ 
+			set ipaddr 192.168.1.126
+			set arg1 "./start-cleaning storage2"
+			}
+	"ACN-CIT7" 	{ 
+			set ipaddr 192.168.1.127
+			set arg1 "./start-cleaning storage2"
+			}
+	"ACN-CIT8" 	{ 
+			set ipaddr 192.168.1.128
+			set arg1 "./start-cleaning storage2"
+			}
+	"ACN-ITTD1" 	{ 
+			set ipaddr 192.168.1.221
+			set arg1 "./start-cleaning storage3"
+			}
+	"ACN-ITTD2" 	{ 
+			set ipaddr 192.168.1.222
+			set arg1 "./start-cleaning storage3"
+			}
+	"ACN-ITTD3" 	{ 
+			set ipaddr 192.168.1.223
+			set arg1 "./start-cleaning storage3"
+			}
+	"ACN-ITTD4" 	{ 
+			set ipaddr 192.168.1.224
+			set arg1 "./start-cleaning storage3"
+			}
+	"ACN-ITTD5" 	{ 
+			set ipaddr 192.168.1.225
+			set arg1 "./start-cleaning storage3"
+			}
+	"ACN-ITTD6" 	{ 
+			set ipaddr 192.168.1.226
+			set arg1 "./start-cleaning storage3"
+			}
+	"ACN-ITTD7" 	{ 
+			set ipaddr 192.168.1.227
+			set arg1 "./start-cleaning storage3"
+			}
+	"ACN-ITTD8" 	{ 
+			set ipaddr 192.168.1.228
+			set arg1 "./start-cleaning storage3"
+			}
+	"ACN-DITVM1" 	{ 
+			set ipaddr 192.168.1.51
+			set arg1 "./start-cleaning storage4"
+			}
+	"ACN-DITVM2" 	{ 
+			set ipaddr 192.168.1.52
+			set arg1 "./start-cleaning storage4"
+			}
+	"ACN-DITVM3" 	{ 
+			set ipaddr 192.168.1.53
+			set arg1 "./start-cleaning storage4"
+			}
+	"ACN-DITVM4" 	{ 
+			set ipaddr 192.168.1.54
+			set arg1 "./start-cleaning storage4"
+			}
+	"ACN-DITVM5" 	{ 
+			set ipaddr 192.168.1.55
+			set arg1 "./start-cleaning storage4"
+			}
+	"ACN-DITVM6" 	{ 
+			set ipaddr 192.168.1.56
+			set arg1 "./start-cleaning storage4"
+			}
+	"ACN-DITVM7" 	{ 
+			set ipaddr 192.168.1.57
+			set arg1 "./start-cleaning storage4"
+			}
+	"ACN-DITVM8" 	{ 
+			set ipaddr 192.168.1.58
+			set arg1 "./start-cleaning storage4"
+			}
+	"ACN-DITVM10" 	{ 
+			set ipaddr 192.168.1.60
+			set arg1 "./start-cleaning storage5"
+			}
+	"ACN-DITVM11" 	{ 
+			set ipaddr 192.168.1.61
+			set arg1 "./start-cleaning storage5"
+			}
+	"ACN-DITVM12" 	{ 
+			set ipaddr 192.168.1.62
+			set arg1 "./start-cleaning storage5"
+			}
+	"ACN-DITVM13" 	{ 
+			set ipaddr 192.168.1.63
+			set arg1 "./start-cleaning storage5"
+			}
+	"ACN-DITVM14" 	{ 
+			set ipaddr 192.168.1.64
+			set arg1 "./start-cleaning storage5"
+			}
+	"ACN-DITVM15" 	{ 
+			set ipaddr 192.168.1.65
+			set arg1 "./start-cleaning storage5"
+			}
+	"ACN-DITVM16" 	{ 
+			set ipaddr 192.168.1.66
+			set arg1 "./start-cleaning storage5"
+			}
+	"ACN-DITVM17" 	{ 
+			set ipaddr 192.168.1.67
+			set arg1 "./start-cleaning storage5"
+			}
+	default 
+			{ 
+			puts "HOST not recognised\n" 
+			exit 1
+			}
+}
+
+set password 95030bbMAP
+set timeout -1
+spawn ssh paul@$ipaddr $arg1
+match_max 100000
+expect "*?assword:*"
+send -- "$password\r"
+send -- "\r"
+expect eof
+

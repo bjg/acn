@@ -1,0 +1,8 @@
+! this is a comment
+! Put star details below
+! X Y Radius Annulus Dannulus boxwidth Threshold
+112 320 15 10 15 80 660 ! Star details 1
+127 221 15 10 15 80 660 ! Star details 2
+119 104 15 10 15 80 660 ! Star details 3
+260 43 15 10 15 80 660 ! Star details 4
+380 378 15 10 15 80 660 ! Star details 5

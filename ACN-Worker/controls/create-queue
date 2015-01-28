@@ -1,0 +1,101 @@
+#!/bin/bash
+#
+# 
+#
+#
+#
+#
+usage ()
+{
+	printf "\n"
+	printf "Usage: `basename $0`[ -hvszc ]\n"
+	printf "\n"
+	printf "Switchs\n"
+	printf "        -h  :   provide help on parameter use\n"
+	printf "        -v  :   print the latest version of the script\n"
+	printf "        -s  :   MODE is STANDARD. Use standard fits files \n"
+	printf "        -z  :   MODE is COMPRESSED. Use compressed fits.fz files \n"
+	printf "        -c  :   MODE is CLIPPED. Use clipped compressed starx-fits.fz files \n"
+	printf "\n"
+}
+
+
+START=$(date +%s)
+
+# Default Directories for use in queue creation
+QUEUEDIR="/mnt/storage1/queue"
+RESULTDIR="/mnt/storage1/queue/result"
+STANDARDSOURCEDIR=/mnt/storage1/AstronomyData/ExpA/dataset1
+COMPRESSEDSOURCEDIR=/mnt/storage1/AstronomyData/compressedRAW
+CLIPPEDSOURCEDIR=/mnt/storage1/AstronomyData/compressed
+
+
+while getopts hvczs OPT; do
+	case "$OPT" in
+		h)
+			usage
+			exit 0
+			;;
+		v)
+			echo "`basename $0` version 0.4"
+			exit 0
+			;;
+		c)
+			MODE=CLIPPED
+			SOURCE=$CLIPPEDSOURCEDIR
+			;;
+		z)
+			MODE=COMPRESSED
+			SOURCE=$COMPRESSEDSOURCEDIR
+			;;
+		s)
+			MODE=STANDARD
+			SOURCE=$STANDARDSOURCEDIR
+			;;
+		\?)
+			usage
+			exit 1
+			;;
+	esac
+done
+
+
+#  If the queuedirectory already exists then move it
+
+if [ -d $QUEUEDIR ]; then
+        mv $QUEUEDIR $QUEUEDIR-$MODE-$START #2> /dev/null
+        if [ $? -ne 0 ] ; then
+                echo failed to move queue. 
+                exit 1
+        fi
+fi
+
+mkdir $QUEUEDIR 2> /dev/null
+if [ $? -ne 0 ] ; then
+	echo destination queue exists. Please select a new queue or clean existing queue
+	exit 1
+fi
+mkdir $RESULTDIR 2> /dev/null
+if [ $? -ne 0 ] ; then
+	echo Failed to create the Results Directory. Please select a new directory
+	exit 1
+fi
+mkdir $RESULTDIR/active-nodes 2> /dev/null
+if [ $? -ne 0 ] ; then
+	echo Active nodes directory exists. Please select a new directory
+	exit 1
+fi
+
+printf "Populating the Queue using %s mode\n" $MODE
+for i in $( ls $SOURCE ); do
+	touch $QUEUEDIR/Queued-$i
+	COUNT=$(($COUNT+1)) 
+done
+
+chmod -R 777 $QUEUEDIR
+chmod -R 777 $RESULTDIR
+
+END=$(date +%s)
+DIFF=$(( $END - $START ))
+
+printf "%d files populated to queue %s in %d seconds\n\n" $COUNT $QUEUEDIR $DIFF

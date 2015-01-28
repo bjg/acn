@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+# Author: Paul Doyle 2012 May
+# - The function of the script is to connect to a specific Astronomy Compute Node (ACN)
+# - once connected to an ACN the next step is to kick off the aphot cleaning
+#
+#
+START=$(date +%s)
+USAGE="Usage: `basename $0` [ -hvcr ] hostfile"
+while getopts hvcr OPT; do
+	case "$OPT" in
+		h)
+			echo $USAGE
+			exit 0
+			;;
+		v)
+			echo "`basename $0` version 0.2"
+			exit 0
+			;;
+		c)
+			MODE="CLEAN"
+			;;
+		r)
+			MODE="RUN"
+			;;
+		\?)
+			echo $USAGE >&2
+			exit 1
+			;;
+	esac
+done
+
+shift `expr $OPTIND - 1`
+if [ $# -eq 1 ]; then
+	HOSTFILE=$1 
+else
+    echo $USAGE >&2
+    exit 1
+fi
+
+
+for line in `cat $HOSTFILE`;
+do
+	parts=(${line//:/ })
+	if [ ${parts[0]} = "node" ] ; then
+		HOST=${parts[1]}
+		IP=${parts[2]}
+		STORAGE=${parts[3]}
+		if [ $MODE = "CLEAN" ] ; then
+			ssh paul@$IP ./prepare-acn &
+		elif [ $MODE = "RUN" ] ; then
+			ssh paul@$IP ./start-cleaning $STORAGE &
+		fi
+	fi	
+done
+

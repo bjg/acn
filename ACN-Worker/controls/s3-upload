@@ -1,0 +1,73 @@
+#!/bin/bash
+#
+# Author: Paul Doyle 2012 May
+# - The function of the script is to verify connectivity to nodes 
+# - once connected to an ACN the next step is to kick off the  ping
+# 
+#
+usage ()
+{
+        printf "\n"
+        printf "Usage: `basename $0`[ -hvp ]  sourcedir\n"
+        printf "\n"
+        printf "Switchs\n"
+        printf "        -h            :   provide help on parameter use\n"
+        printf "        -v            :   print the latest version of the script\n"
+        printf "        -p            :   upload files in parallel\n"
+        printf "\n"
+}
+
+START=$(date +%s)
+MODE="SERIAL"
+while getopts hvpxcr OPT; do
+        case "$OPT" in
+                h)
+                        usage
+                        exit 0
+                        ;;
+                v)
+                        echo "`basename $0` version 0.1"
+                        exit 0
+                        ;;
+                p)
+                        MODE="PARALLEL"
+                        ;;
+                \?)
+                        usage
+                        exit 1
+                        ;;
+        esac
+done
+
+shift `expr $OPTIND - 1`
+if [ $# -eq 1 ]; then
+        SOURCEDIR=$1
+else
+        usage
+        exit 1
+fi
+
+#
+# 
+#
+
+if [ -d $SOURCEDIR ] ; then
+	echo Source director exists...
+else
+	echo Cannot find sourcedir..exiting
+	exit 1
+fi
+
+if [ $MODE = "PARALLEL" ]; then
+	echo "Running in Parallel Mode"
+else
+	echo "Running in Serial Mode"
+fi
+
+for i in $( ls $SOURCEDIR/* ); do
+	if [ $MODE = "PARALLEL" ] ; then
+       		s3cmd put $i s3://astronomydata-compressed &
+	else
+       		s3cmd put $i s3://astronomydata-compressed 
+	fi
+done

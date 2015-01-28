@@ -1,0 +1,67 @@
+#!/bin/bash
+START=$(date +%s)
+USAGE="Usage: `basename $0` [ -hvc ] [-s sourcefiles] queuedir resultdir"
+
+while getopts hvcs: OPT; do
+	case "$OPT" in
+		h)
+			echo $USAGE
+			exit 0
+			;;
+		v)
+			echo "`basename $0` version 0.4"
+			exit 0
+			;;
+		c)
+			SOURCE=$OPTARG
+			echo src = $SOURCE
+			exit 0
+			;;
+		s)
+			SOURCE=$OPTARG
+			;;
+		\?)
+			echo $USAGE >&2
+			exit 1
+			;;
+	esac
+done
+
+shift `expr $OPTIND - 1`
+
+if [ $# -eq 2 ]; then
+	QUEUEDIR=$1 
+	RESULTDIR=$2 
+else
+    echo $USAGE >&2
+    exit 1
+fi
+
+
+mkdir $QUEUEDIR 2> /dev/null
+if [ $? -ne 0 ] ; then
+	echo destination queue exists. Please select a new queue or clean existing queue
+	exit 1
+fi
+mkdir $RESULTDIR 2> /dev/null
+if [ $? -ne 0 ] ; then
+	echo Results file exists. Please select a new directory
+	exit 1
+fi
+mkdir $RESULTDIR/active-nodes 2> /dev/null
+if [ $? -ne 0 ] ; then
+	echo Active nodes directory exists. Please select a new directory
+	exit 1
+fi
+
+for i in $( ls $SOURCE ); do
+	touch $QUEUEDIR/Queued-$i
+	COUNT=$(($COUNT+1)) 
+done
+chmod -R 777 $QUEUEDIR
+chmod -R 777 $RESULTDIR
+
+END=$(date +%s)
+DIFF=$(( $END - $START ))
+
+echo "Seconds elapsed $DIFF: Queue contains $COUNT files"

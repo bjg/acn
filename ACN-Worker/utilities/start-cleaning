@@ -1,0 +1,52 @@
+#/bin/sh
+
+USAGE="Usage: `basename $0` [-hv] storage"
+while getopts hv OPT; do
+        case "$OPT" in
+                h)
+                        echo $USAGE
+                        exit 0
+                        ;;
+                v)
+                        echo "`basename $0` version 0.4"
+                        exit 0
+                        ;;
+                \?)
+                        echo $USAGE >&2
+                        exit 1
+                        ;;
+        esac
+done
+
+shift `expr $OPTIND - 1`
+if [ $# -eq 1 ]; then
+        STORAGE=$1
+else
+    echo $USAGE >&2
+    exit 1
+fi
+
+if [ $STORAGE = "storage1" ] ; then
+#	./run-aphot-queue -s /mnt/storage1/queue/ /mnt/storage1/ /mnt/storage1/queue/result
+	./run-aphot-queue /mnt/storage1/queue/ /mnt/storage1/ /mnt/storage1/queue/result
+fi
+if [ $STORAGE = "storage2" ] ; then
+#	./run-aphot-queue -s /mnt/storage1/queue/ /mnt/storage2/ /mnt/storage1/queue/result
+	./run-aphot-queue /mnt/storage1/queue/ /mnt/storage2/ /mnt/storage1/queue/result
+fi
+if [ $STORAGE = "storage3" ] ; then
+#	./run-aphot-queue -s /mnt/storage1/queue/ /mnt/storage3/ /mnt/storage1/queue/result
+	./run-aphot-queue /mnt/storage1/queue/ /mnt/storage3/ /mnt/storage1/queue/result
+fi
+if [ $STORAGE = "storage4" ] ; then
+#	./run-aphot-queue -s /mnt/storage1/queue/ /mnt/storage4/ /mnt/storage1/queue/result
+	./run-aphot-queue /mnt/storage1/queue/ /mnt/storage4/ /mnt/storage1/queue/result
+fi
+if [ $STORAGE = "storage5" ] ; then
+#	./run-aphot-queue -s /mnt/storage1/queue/ /mnt/storage5/ /mnt/storage1/queue/result
+	./run-aphot-queue /mnt/storage1/queue/ /mnt/storage5/ /mnt/storage1/queue/result
+fi
+if [ $STORAGE = "storage6" ] ; then
+#	./run-aphot-queue -s /mnt/storage1/queue/ /mnt/storage6/ /mnt/storage1/queue/result
+	./run-aphot-queue /mnt/storage1/queue/ /mnt/storage6/ /mnt/storage1/queue/result
+fi
